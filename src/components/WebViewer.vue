@@ -4,25 +4,27 @@
   </div>
 </template>
 
-
 <script lang="ts">
-	import { ref, onMounted } from 'vue'
+	import { ref, onMounted, nextTick } from 'vue'
 	import WebViewer from '@pdftron/webviewer'
 
 	export default {
 	  name: 'WebViewer',
 	  props: { initialDoc: { type: String }},
 	  setup(props) {
-	    const viewer = ref(null)
+	    const viewer = ref<HTMLElement | null>(null)
 	    onMounted(() => {
-	      const path = `${import.meta.env.BASE_URL}webviewer`;
-	      WebViewer({ path, initialDoc: props.initialDoc }, viewer.value);
+	      nextTick().then(() => {
+	        if (viewer.value) {
+	          const path = `${import.meta.env.BASE_URL}webviewer`;
+	          WebViewer({ path, initialDoc: props.initialDoc }, viewer.value);
+	        }
+	      })
 	    })
 	    return { viewer }
 	  },
 	}
 </script>
-
 
 <style>
 .viewer-container {
